@@ -1,0 +1,238 @@
+---
+import DitheringBackground from '../components/DitheringBackground';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="manifest" href="/site.webmanifest">
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300&family=Instrument+Serif:wght@400&display=swap" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300&family=Instrument+Serif:wght@400&display=swap" />
+		<title>Alex Nicholson | Full Stack Web Developer | Middlesbrough, UK</title>
+		<meta name="description" content="Middlesbrough-based Full Stack Web Developer specialising in carefully designed, well-structured, and performance-driven websites and apps." />
+		<style>
+			html {
+				width: 100%;
+				height: 100%;
+				background-color: #000000;
+			}
+			
+			body {
+				width: 100%;
+				height: 100%;
+			}
+			
+			body {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow-x: hidden;
+				font-family: 'Instrument Serif', serif;
+			}
+
+			@keyframes fadeInBlurTitle {
+				from {
+					opacity: 0;
+					filter: blur(5px);
+					transform: translateY(-10px);
+				}
+				to {
+					opacity: 1;
+					filter: blur(0);
+					transform: translateY(0);
+				}
+			}
+
+			@keyframes fadeInBlur {
+				from {
+					opacity: 0;
+					filter: blur(3px);
+					transform: translateY(-2px);
+				}
+				to {
+					opacity: 1;
+					filter: blur(0);
+					transform: translateY(0);
+				}
+			}
+
+			h1 {
+				font-family: 'Instrument Serif', serif;
+				font-size: clamp(4.5rem, 10vw, 9rem);
+				font-weight: 400;
+				text-align: center;
+				margin: 0;
+				padding: 0 2rem 0.5rem;
+				color: #ffffff;
+				position: relative;
+				z-index: 1;
+				line-height: 1.1;
+				letter-spacing: 0.8;
+				opacity: 0;
+				filter: blur(5px);
+				animation: fadeInBlurTitle 1s ease-out 0.8s forwards;
+			}
+
+			.info-section {
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				align-items: center;
+				justify-content: center;
+				column-gap: 1rem;
+				font-family: 'DM Sans', sans-serif;
+				font-weight: 300;
+				color: rgba(255, 255, 255, 0.7);
+				position: relative;
+				z-index: 1;
+				text-align: center;
+				font-size: clamp(0.875rem, 1.5vw, 1rem);
+				line-height: 2;opacity: 0;
+				filter: blur(3px);
+				animation: fadeInBlur 1s ease-out 1.6s forwards;
+			}
+
+			.tagline {
+				margin: 0;
+				padding: 0;
+				white-space: nowrap;
+				/* opacity: 0;
+				filter: blur(10px);
+				animation: fadeInBlur 0.8s ease-out 1.4s forwards; */
+			}
+
+			.separator {
+				display: inline-block;
+				/* opacity: 0;
+				filter: blur(10px);
+				animation: fadeInBlur 0.8s ease-out 1.4s forwards; */
+			}
+
+			@media (max-width: 600px) {
+				.info-section {
+					flex-direction: column;
+				}
+
+				.separator {
+					display: none;
+				}
+			}
+
+			.social-links {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 1.5rem;
+				margin: 0;
+				padding: 0;
+			}
+
+			.social-links li {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				/* opacity: 0;
+				filter: blur(10px); */
+			}
+
+			/* .social-links li:nth-child(1) {
+				animation: fadeInBlur 0.8s ease-out 1.8s forwards;
+			}
+
+			.social-links li:nth-child(2) {
+				animation: fadeInBlur 0.8s ease-out 2.2s forwards;
+			}
+
+			.social-links li:nth-child(3) {
+				animation: fadeInBlur 0.8s ease-out 2.6s forwards;
+			} */
+
+			.social-links a {
+				color: inherit;
+				text-decoration: none;
+				transition: color 0.3s ease;
+				position: relative;
+				display: inline-block;
+			}
+
+			.social-links a::after {
+				content: '';
+				position: absolute;
+				bottom: -2px;
+				left: 0;
+				width: 100%;
+				height: 1px;
+				background-color: currentColor;
+				transform: scaleX(0);
+				transform-origin: left;
+				transition: transform 0.3s ease;
+			}
+
+			.social-links a:hover, .social-links a:focus {
+				color: #ffffff;
+			}
+
+			.social-links a:hover::after, .social-links a:focus::after {
+				transform: scaleX(1);
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				h1 {
+					animation: none;
+					opacity: 1;
+					filter: none;
+					transform: none;
+				}
+
+				.info-section {
+					animation: none;
+					opacity: 1;
+					filter: none;
+					transform: none;
+				}
+
+				.social-links a {
+					transition: none;
+				}
+
+				.social-links a::after {
+					transition: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<DitheringBackground client:load />
+
+		<h1>Alex Nicholson</h1>
+		
+		<div class="info-section">
+			<p class="tagline">Full Stack Developer based in Middlesbrough, UK</p>
+			
+			<span class="separator">&bull;</span>
+
+			<ul class="social-links">
+				<li>
+					<a href="hello@alexnicholson.co.uk" target="_blank" rel="noopener noreferrer">Email</a>
+				</li>
+				<li>
+					<a href="https://www.linkedin.com/in/nichxlson" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+				</li>
+				<li>
+					<a href="https://github.com/nichxlson" target="_blank" rel="noopener noreferrer">GitHub</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+</html>
