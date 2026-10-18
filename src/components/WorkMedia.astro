@@ -1,0 +1,130 @@
+---
+import type { WorkMedia } from '../data/work';
+
+interface Props {
+	media: WorkMedia;
+}
+
+const { media } = Astro.props;
+const frame = media.frame ?? 'browser';
+const isMedia = media.type !== 'placeholder';
+---
+
+<div class:list={['frame', `frame-${frame}`, { 'is-media': isMedia }]}>
+	{frame === 'browser' && (
+		<div class="chrome" aria-hidden="true">
+			<span></span><span></span><span></span>
+		</div>
+	)}
+	<div class="screen">
+		{media.type === 'image' && (
+			<img src={media.src} alt={media.alt} width={media.width} height={media.height} loading="lazy" decoding="async" />
+		)}
+		{media.type === 'video' && (
+			<video src={media.src} poster={media.poster} aria-label={media.alt} muted loop playsinline preload="metadata"></video>
+		)}
+		{media.type === 'placeholder' && (
+			<div class="placeholder" role="img" aria-label={media.alt}>
+				<span>{media.label}</span>
+			</div>
+		)}
+	</div>
+</div>
+
+<style>
+	.frame {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border: 1px solid var(--hairline);
+		border-radius: 0.75rem;
+		background: #0a0a0a;
+		box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.6);
+	}
+
+	.frame-browser {
+		width: min(100%, 46rem);
+		aspect-ratio: 16 / 10;
+	}
+
+	/* Phone screens are 9:16, so the frame matches and nothing is cropped */
+	.frame-device {
+		height: min(72svh, 40rem);
+		aspect-ratio: 9 / 16;
+		border-radius: 0.5rem;
+	}
+
+	/* The pinned media strip is short on mobile, so the phone frame has to fit inside it */
+	@media (max-width: 800px) {
+		.frame-device {
+			height: 36svh;
+			border-radius: 0.375rem;
+		}
+	}
+
+	.chrome {
+		display: flex;
+		gap: 0.4rem;
+		padding: 0.7rem 0.9rem;
+		border-bottom: 1px solid var(--hairline);
+		flex: none;
+	}
+
+	.chrome span {
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.18);
+	}
+
+	.screen {
+		position: relative;
+		flex: 1;
+		min-height: 0;
+	}
+
+	img,
+	video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* Real screenshots keep their own shape inside a browser frame, so nothing is cropped */
+	.frame-browser.is-media {
+		aspect-ratio: auto;
+	}
+
+	.frame-browser.is-media .screen {
+		flex: none;
+	}
+
+	.frame-browser.is-media img,
+	.frame-browser.is-media video {
+		position: static;
+		display: block;
+		height: auto;
+	}
+
+	.placeholder {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		background-color: #050b17;
+		background-image:
+			radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1px, transparent 0),
+			linear-gradient(135deg, rgba(0, 33, 77, 0.55), rgba(0, 0, 0, 0) 70%);
+		background-size: 8px 8px, 100% 100%;
+	}
+
+	.placeholder span {
+		font-family: var(--serif);
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		color: var(--text);
+		padding: 0 1rem;
+		text-align: center;
+	}
+</style>

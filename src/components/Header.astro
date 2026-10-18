@@ -1,0 +1,88 @@
+<header class="site-header">
+	<a class="wordmark u-link" href="#top">Alex Nicholson</a>
+	<nav aria-label="Primary">
+		<ul role="list">
+			<li><a class="u-link" href="#work">Work</a></li>
+			<li><a class="u-link" href="#contact">Contact</a></li>
+		</ul>
+	</nav>
+</header>
+
+<style>
+	/* visibility keeps the nav out of the tab order until it starts to appear */
+	@keyframes headerIn {
+		from {
+			opacity: 0;
+			filter: blur(3px);
+			visibility: visible;
+		}
+		to {
+			opacity: 1;
+			filter: blur(0);
+			visibility: visible;
+		}
+	}
+
+	.site-header {
+		position: fixed;
+		inset: 0 0 auto 0;
+		z-index: 10;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1.5rem var(--gutter);
+		font-family: var(--sans);
+		font-weight: 300;
+		font-size: clamp(0.875rem, 1.5vw, 1rem);
+		color: var(--text);
+		opacity: 0;
+		visibility: hidden;
+		animation: headerIn 1s ease-out 2.2s forwards;
+	}
+
+	/* Larger touch targets without moving anything */
+	.site-header a {
+		padding-block: 0.6rem;
+		margin-block: -0.6rem;
+	}
+
+	/* Fades in as the hero scrolls away (--hero-out is written by bg-fade.ts) */
+	/* visibility keeps it out of the tab order while it is invisible */
+	.wordmark {
+		opacity: var(--hero-out);
+		visibility: hidden;
+	}
+
+	:global(html[data-past-hero]) .wordmark {
+		visibility: visible;
+	}
+
+	/* Soft backdrop so nav text stays legible over scrolling content */
+	.site-header::before {
+		content: '';
+		position: absolute;
+		inset: 0 0 -1rem 0;
+		z-index: -1;
+		background: linear-gradient(var(--bg) 40%, transparent);
+		/* Only appears once the shader has faded, so it never tints the dithering */
+		opacity: calc(1 - var(--bg-fade));
+		pointer-events: none;
+	}
+
+	ul {
+		display: flex;
+		gap: 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.site-header {
+			animation: none;
+			opacity: 1;
+			visibility: visible;
+			filter: none;
+		}
+	}
+</style>

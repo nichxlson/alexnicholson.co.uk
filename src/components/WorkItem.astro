@@ -1,0 +1,229 @@
+---
+import type { WorkItem } from '../data/work';
+import { platformIcons } from '../data/icons';
+import WorkMedia from './WorkMedia.astro';
+
+interface Props {
+	item: WorkItem;
+}
+
+const { item } = Astro.props;
+
+// A step without its own media keeps the previous layer pinned, so several steps can share one layer.
+const layers = item.steps.flatMap((step) => (step.media ? [step.media] : []));
+let layerIndex = -1;
+const stepLayer = item.steps.map((step) => (step.media ? ++layerIndex : Math.max(layerIndex, 0)));
+---
+
+<article class="work-item" id={item.slug} data-work-item aria-labelledby={`${item.slug}-title`}>
+	<!-- Decorative for assistive tech: each step below carries its own image description in text -->
+	<div class="media" aria-hidden="true">
+		{layers.map((media, i) => (
+			<div class:list={['layer', { 'is-active': i === 0 }]} data-layer={i}>
+				<WorkMedia media={media} />
+			</div>
+		))}
+	</div>
+
+	<div class="copy">
+		{item.steps.map((step, i) => (
+			<div class="step" data-step={stepLayer[i]}>
+				{i === 0 && (
+					<header class="intro">
+						<h3 id={`${item.slug}-title`}>{item.title}</h3>
+						<div class="meta">
+							<ul class="platforms" role="list" aria-label="Platforms">
+								{item.platforms.map((key) => (
+									<li>
+										<svg viewBox="0 0 24 24" role="img" fill="currentColor">
+											<title>{platformIcons[key].label}</title>
+											<path d={platformIcons[key].path} />
+										</svg>
+									</li>
+								))}
+							</ul>
+							{item.awards && (
+								<ul class="awards" role="list" aria-label="Awards">
+									{item.awards.map((award) => <li>{award}</li>)}
+								</ul>
+							)}
+						</div>
+						<p class="summary">{item.summary}</p>
+					</header>
+				)}
+				<h4>{step.heading}</h4>
+				<p>{step.body}</p>
+				{step.media && <p class="sr-only">Image: {step.media.alt}</p>}
+			</div>
+		))}
+	</div>
+</article>
+
+<style>
+	.work-item {
+		display: grid;
+		grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+		column-gap: clamp(2rem, 6vw, 6rem);
+		padding-inline: var(--gutter);
+	}
+
+	.work-item + .work-item {
+		border-top: 1px solid var(--hairline);
+	}
+
+	/* Sticky is bounded by the article: it pins while this item scrolls, releases at the end,
+	   and the next article scrolls in and pins in turn. */
+	.media {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		display: grid;
+		place-items: center;
+	}
+
+	.layer {
+		grid-area: 1 / 1;
+		display: grid;
+		place-items: center;
+		width: 100%;
+		opacity: 0;
+		transition: opacity 0.6s ease;
+		pointer-events: none;
+	}
+
+	.layer.is-active {
+		opacity: 1;
+	}
+
+	/* One gap is used between every block (intro, each step, footer) so the rhythm is even */
+	.copy {
+		--gap: clamp(5rem, 14svh, 9rem);
+		padding-block: 35svh 50svh;
+	}
+
+	.step {
+		max-width: 32rem;
+	}
+
+	.step + .step {
+		margin-top: var(--gap);
+	}
+
+	/* Icons and awards sit on one row beneath the title */
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem 1.25rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.platforms {
+		display: flex;
+		align-items: center;
+		gap: 0.875rem;
+		color: var(--text-strong);
+	}
+
+	.platforms svg {
+		display: block;
+		height: 1.5rem;
+		width: auto;
+		aspect-ratio: 1;
+	}
+
+	h3 {
+		font-family: var(--serif);
+		font-weight: 400;
+		font-size: clamp(2.25rem, 3.6vw, 3.25rem);
+		line-height: 1.05;
+		margin: 0 0 1rem;
+		color: var(--text-strong);
+	}
+
+	.summary,
+	.step p {
+		font-family: var(--sans);
+		font-weight: 300;
+		font-size: clamp(1rem, 1.4vw, 1.125rem);
+		line-height: 1.7;
+		margin: 0;
+	}
+
+	.intro {
+		margin-bottom: var(--gap);
+	}
+
+	h4 {
+		font-family: var(--serif);
+		font-weight: 400;
+		font-size: clamp(1.5rem, 2vw, 1.75rem);
+		line-height: 1.2;
+		margin: 0 0 0.5rem;
+		color: var(--text-strong);
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.awards {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.25rem 1rem;
+	}
+
+	.awards li {
+		font-family: var(--sans);
+		font-weight: 300;
+		font-size: 0.8125rem;
+		color: var(--text);
+		white-space: nowrap;
+	}
+
+	@media (max-width: 800px) {
+		.work-item {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.media {
+			height: 46svh;
+			padding-top: 3.5rem;
+			box-sizing: border-box;
+			z-index: 1;
+			background: linear-gradient(var(--bg) 85%, transparent);
+		}
+
+		.layer {
+			align-items: center;
+		}
+
+		.copy {
+			--gap: 4.5rem;
+			padding-block: 8svh 40svh;
+		}
+	}
+
+	/* Landscape phones and heavy zoom leave almost no height: let the media scroll with the page instead of pinning */
+	@media (max-width: 800px) and (max-height: 600px) {
+		.media {
+			position: static;
+			height: auto;
+			padding-top: 0;
+			background: none;
+		}
+
+		.layer:not(.is-active) {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.layer {
+			transition: none;
+		}
+	}
+</style>

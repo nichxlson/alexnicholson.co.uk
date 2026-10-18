@@ -1,0 +1,140 @@
+---
+const year = new Date().getFullYear();
+---
+
+<section id="contact" aria-labelledby="contact-title" class="contact">
+	<div class="inner">
+		<h2 id="contact-title">Let's talk</h2>
+		<a class="email u-link" href="mailto:hello@alexnicholson.co.uk">Email me</a>
+
+		<div class="actions">
+			<button type="button" class="copy u-link" data-copy="hello@alexnicholson.co.uk">Copy email</button>
+			<span class="status" role="status" aria-live="polite" data-copy-status></span>
+			<a class="u-link" href="https://www.linkedin.com/in/nichxlson" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>
+			<a class="u-link" href="https://github.com/nichxlson" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+		</div>
+	</div>
+
+	<p class="legal">&copy; {year} Alex Nicholson</p>
+</section>
+
+<style>
+	.contact {
+		position: relative;
+		min-height: 100svh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: 6rem var(--gutter) 2rem;
+		border-top: 1px solid var(--hairline);
+	}
+
+	.inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
+		margin: auto 0;
+	}
+
+	h2 {
+		font-family: var(--serif);
+		font-weight: 400;
+		font-size: clamp(1.5rem, 3vw, 2.25rem);
+		margin: 0;
+		color: var(--text);
+	}
+
+	.email {
+		font-family: var(--serif);
+		font-size: clamp(3rem, 6vw, 5.5rem);
+		line-height: 1.1;
+		color: var(--text-strong);
+	}
+
+	.email::after {
+		height: 2px;
+		transform: scaleX(1);
+		opacity: 0.35;
+		transition: opacity 0.3s ease;
+	}
+
+	.email:hover::after,
+	.email:focus-visible::after {
+		opacity: 1;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem 1.5rem;
+		font-family: var(--sans);
+		font-weight: 300;
+		font-size: clamp(0.875rem, 1.5vw, 1rem);
+		color: var(--text);
+		margin-top: 1rem;
+	}
+
+	.copy {
+		background: none;
+		border: 0;
+		padding: 0.6rem 0;
+		margin: -0.6rem 0;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	/* Always out of the flow, so "Copied" appearing never moves the links; stays in the
+	   accessibility tree so the announcement is reliable */
+	.actions {
+		position: relative;
+	}
+
+	.status {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		margin-top: 0.75rem;
+		text-align: center;
+		font-size: 0.8125rem;
+	}
+
+	.legal {
+		font-family: var(--sans);
+		font-weight: 300;
+		font-size: 0.8125rem;
+		margin: 0;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+</style>
+
+<script>
+	const button = document.querySelector<HTMLButtonElement>('[data-copy]');
+	const status = document.querySelector<HTMLElement>('[data-copy-status]');
+	let timer: number | undefined;
+
+	button?.addEventListener('click', async () => {
+		if (!status) return;
+		try {
+			await navigator.clipboard.writeText(button.dataset.copy ?? '');
+			status.textContent = 'Copied';
+		} catch {
+			status.textContent = 'Copy failed, use the email link';
+		}
+		clearTimeout(timer);
+		timer = window.setTimeout(() => (status.textContent = ''), 2500);
+	});
+</script>

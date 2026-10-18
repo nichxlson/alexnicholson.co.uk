@@ -1,5 +1,9 @@
 ---
 import DitheringBackground from '../components/DitheringBackground';
+import Header from '../components/Header.astro';
+import WorkSection from '../components/WorkSection.astro';
+import Contact from '../components/Contact.astro';
+import '../styles/global.css';
 ---
 
 <html lang="en">
@@ -18,27 +22,12 @@ import DitheringBackground from '../components/DitheringBackground';
 		<title>Alex Nicholson | Senior Developer | Middlesbrough, UK</title>
 		<meta name="description" content="Middlesbrough-based Senior Developer specialising in carefully designed, well-structured, and performance-driven websites and apps." />
 		<style>
-			html {
-				width: 100%;
-				height: 100%;
-				background-color: #000000;
-			}
-			
-			body {
-				width: 100%;
-				height: 100%;
-			}
-			
-			body {
+			.hero {
+				min-height: 100svh;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				justify-content: center;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow-x: hidden;
-				font-family: 'Instrument Serif', serif;
 			}
 
 			@keyframes fadeInBlurTitle {
@@ -54,16 +43,19 @@ import DitheringBackground from '../components/DitheringBackground';
 				}
 			}
 
+			/* visibility keeps the hero links out of the tab order until they start to appear */
 			@keyframes fadeInBlur {
 				from {
 					opacity: 0;
 					filter: blur(3px);
 					transform: translateY(-2px);
+					visibility: visible;
 				}
 				to {
 					opacity: 1;
 					filter: blur(0);
 					transform: translateY(0);
+					visibility: visible;
 				}
 			}
 
@@ -99,6 +91,7 @@ import DitheringBackground from '../components/DitheringBackground';
 				text-align: center;
 				font-size: clamp(0.875rem, 1.5vw, 1rem);
 				line-height: 2;opacity: 0;
+				visibility: hidden;
 				filter: blur(3px);
 				animation: fadeInBlur 1s ease-out 1.6s forwards;
 			}
@@ -122,6 +115,10 @@ import DitheringBackground from '../components/DitheringBackground';
 			@media (max-width: 600px) {
 				.info-section {
 					flex-direction: column;
+				}
+
+				.tagline {
+					white-space: normal;
 				}
 
 				.separator {
@@ -198,6 +195,7 @@ import DitheringBackground from '../components/DitheringBackground';
 				.info-section {
 					animation: none;
 					opacity: 1;
+					visibility: visible;
 					filter: none;
 					transform: none;
 				}
@@ -213,26 +211,39 @@ import DitheringBackground from '../components/DitheringBackground';
 		</style>
 	</head>
 	<body>
+		<a class="skip" href="#work">Skip to work</a>
 		<DitheringBackground client:load />
+		<Header />
 
-		<h1>Alex Nicholson</h1>
-		
-		<div class="info-section">
-			<p class="tagline">Senior Developer based in Middlesbrough, UK</p>
-			
-			<span class="separator">&bull;</span>
+		<main>
+			<section class="hero" id="top">
+				<h1>Alex Nicholson</h1>
 
-			<ul class="social-links">
-				<li>
-					<a href="mailto:hello@alexnicholson.co.uk" target="_blank" rel="noopener noreferrer">Email</a>
-				</li>
-				<li>
-					<a href="https://www.linkedin.com/in/nichxlson" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-				</li>
-				<li>
-					<a href="https://github.com/nichxlson" target="_blank" rel="noopener noreferrer">GitHub</a>
-				</li>
-			</ul>
-		</div>
+				<div class="info-section">
+					<p class="tagline">Senior Developer based in Middlesbrough, UK</p>
+
+					<span class="separator" aria-hidden="true">&bull;</span>
+
+					<ul class="social-links" role="list">
+						<li>
+							<a href="mailto:hello@alexnicholson.co.uk">Email</a>
+						</li>
+						<li>
+							<a href="https://www.linkedin.com/in/nichxlson" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>
+						</li>
+						<li>
+							<a href="https://github.com/nichxlson" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+						</li>
+					</ul>
+				</div>
+			</section>
+
+			<WorkSection />
+			<Contact />
+		</main>
+
+		<script>
+			import '../scripts/bg-fade.ts';
+		</script>
 	</body>
 </html>

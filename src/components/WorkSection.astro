@@ -1,0 +1,77 @@
+---
+import { work } from '../data/work';
+import WorkItem from './WorkItem.astro';
+---
+
+<section id="work" aria-labelledby="work-title" class="work">
+	<h2 id="work-title">Work</h2>
+
+	{work.map((item) => <WorkItem item={item} />)}
+</section>
+
+<style>
+	.work {
+		position: relative;
+	}
+
+	/* The pinned media is centred in a full-height strip, which leaves a big gap under the heading.
+	   Pull the first project up to close it (desktop only: on mobile the pinned strip would cover the heading). */
+	@media (min-width: 801px) {
+		h2 + :global(.work-item) {
+			margin-top: calc(-1 * clamp(6rem, 19svh, 11rem));
+		}
+	}
+
+	/* Type scale: hero h1 (4.5-9rem) > Work h2 (3-5.5rem) > project h3 (2.25-3.25rem) > step h4 */
+	h2 {
+		font-family: var(--serif);
+		font-size: clamp(3rem, 6vw, 5.5rem);
+		font-weight: 400;
+		line-height: 1.1;
+		text-align: center;
+		margin: 0;
+		padding: clamp(3rem, 9svh, 6rem) 2rem 0;
+		color: var(--text-strong);
+	}
+</style>
+
+<script>
+	// One observer per item swaps the pinned media to match the step in view.
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	document.querySelectorAll<HTMLElement>('[data-work-item]').forEach((item) => {
+		const layers = [...item.querySelectorAll<HTMLElement>('[data-layer]')];
+		const steps = item.querySelectorAll<HTMLElement>('[data-step]');
+		let current = 0;
+		let visible = false;
+
+		const sync = () => {
+			layers.forEach((layer, n) => {
+				const on = n === current;
+				layer.classList.toggle('is-active', on);
+				layer.querySelectorAll('video').forEach((video) => {
+					if (on && visible && !reduceMotion) video.play().catch(() => {});
+					else video.pause();
+				});
+			});
+		};
+
+		new IntersectionObserver(([entry]) => {
+			visible = entry.isIntersecting;
+			sync();
+		}).observe(item);
+
+		const stepObserver = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) return;
+					current = Number((entry.target as HTMLElement).dataset.step);
+					sync();
+				});
+			},
+			// A thin band through the middle of the viewport
+			{ rootMargin: '-45% 0px -45% 0px' },
+		);
+		steps.forEach((step) => stepObserver.observe(step));
+	});
+</script>
